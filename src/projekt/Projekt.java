@@ -33,7 +33,6 @@ public class Projekt extends AbstractOpenGLBase {
         createArrays1();
         cube1Init();
 
-        glEnable(GL_DEPTH_TEST); // z-Buffer aktivieren
         projectionMatrix1 = new Matrix4(1.0f, 100f);
         int camloc1 = glGetUniformLocation(shaderProgram1.getId(), "projectionMatrix");
         glUniformMatrix4fv(camloc1, false, projectionMatrix1.getValuesAsArray());
@@ -43,10 +42,10 @@ public class Projekt extends AbstractOpenGLBase {
         createArrays2();
         cube2Init();
 
-        glEnable(GL_DEPTH_TEST); // z-Buffer aktivieren
-        projectionMatrix2 = new Matrix4(1.0f, 100f);
         int camloc2 = glGetUniformLocation(shaderProgram2.getId(), "projectionMatrix");
-        glUniformMatrix4fv(camloc2, false, projectionMatrix2.getValuesAsArray());
+        glUniformMatrix4fv(camloc2, false, projectionMatrix1.getValuesAsArray());
+
+        glEnable(GL_DEPTH_TEST); // z-Buffer aktivieren
     }
 
     private void attachVBO(float[] values, int index, int size) {
@@ -59,8 +58,6 @@ public class Projekt extends AbstractOpenGLBase {
     }
 
     private void cube1Init() {
-        glUseProgram(shaderProgram1.getId());
-
         //Vertices
         vaoId1 = glGenVertexArrays();
         glBindVertexArray(vaoId1);
@@ -72,8 +69,6 @@ public class Projekt extends AbstractOpenGLBase {
     }
 
     private void cube2Init() {
-        glUseProgram(shaderProgram2.getId());
-
         //Vertices
         vaoId2 = glGenVertexArrays();
         glBindVertexArray(vaoId2);
@@ -87,7 +82,6 @@ public class Projekt extends AbstractOpenGLBase {
     private void createArrays1() {
         // Koordinaten, VAO, VBO, ... hier anlegen und im Grafikspeicher ablegen
 
-        glUseProgram(shaderProgram1.getId());
         // cube and colors should be equal
 
         // cube has 6 faces, each face needs two triangles. triangle has 3 vertices. each vertex has 3 coordinates.
@@ -209,7 +203,6 @@ public class Projekt extends AbstractOpenGLBase {
     private void createArrays2() {
         // Koordinaten, VAO, VBO, ... hier anlegen und im Grafikspeicher ablegen
 
-        glUseProgram(shaderProgram2.getId());
         // cube and colors should be equal
 
         // cube has 6 faces, each face needs two triangles. triangle has 3 vertices. each vertex has 3 coordinates.
@@ -409,10 +402,14 @@ public class Projekt extends AbstractOpenGLBase {
         // Matrix an Shader übertragen
 
         //cube
+        glUseProgram(shaderProgram1.getId());
+
         int loc1 = glGetUniformLocation(shaderProgram1.getId(), "modelMatrix");
         glUniformMatrix4fv(loc1, false, cubeMatrix1.getValuesAsArray());
         glBindVertexArray(vaoId1);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        glUseProgram(shaderProgram2.getId());
 
         int loc2 = glGetUniformLocation(shaderProgram2.getId(), "modelMatrix");
         glUniformMatrix4fv(loc2, false, cubeMatrix2.getValuesAsArray());
