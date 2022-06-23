@@ -5,19 +5,23 @@ import static org.lwjgl.opengl.GL30.*;
 
 import lenz.opengl.AbstractOpenGLBase;
 import lenz.opengl.ShaderProgram;
+import loadmodel.ObjLoader;
+import lombok.SneakyThrows;
+
+import java.io.File;
+import java.io.IOException;
 
 public class Projekt extends AbstractOpenGLBase {
-    private Matrix4 cubeMatrix1 = new Matrix4();
-    private Matrix4 cubeMatrix2 = new Matrix4();
-    private Matrix4 projectionMatrix1;
-    private Matrix4 projectionMatrix2;
+    private Matrix4 dogMatrix = new Matrix4();
+    private Matrix4 cubeMatrix = new Matrix4();
+    private Matrix4 projectionMatrix;
     private ShaderProgram shaderProgram1;
     private ShaderProgram shaderProgram2;
     private float angle;
-    private float[] cube1;
-    private float[] cube2;
-    private float[] normals;
-    private float[] colors;
+    private float[] dog;
+    private float[] cube;
+    private float[] normalsCube;
+    private float[] colorsCube;
     private int vaoId1;
     private int vaoId2;
 
@@ -26,26 +30,37 @@ public class Projekt extends AbstractOpenGLBase {
         new Projekt().start("CG Projekt", 700, 700);
     }
 
+    @SneakyThrows
     @Override
     protected void init() {
         shaderProgram1 = new ShaderProgram("first_object");
         glUseProgram(shaderProgram1.getId());
         createArrays1();
-        cube1Init();
+        dogInit();
 
-        projectionMatrix1 = new Matrix4(1.0f, 100f);
+        projectionMatrix = new Matrix4(1.0f, 100f);
         int camloc1 = glGetUniformLocation(shaderProgram1.getId(), "projectionMatrix");
-        glUniformMatrix4fv(camloc1, false, projectionMatrix1.getValuesAsArray());
+        glUniformMatrix4fv(camloc1, false, projectionMatrix.getValuesAsArray());
 
         shaderProgram2 = new ShaderProgram("second_object");
         glUseProgram(shaderProgram2.getId());
         createArrays2();
-        cube2Init();
+        cubeInit();
 
         int camloc2 = glGetUniformLocation(shaderProgram2.getId(), "projectionMatrix");
-        glUniformMatrix4fv(camloc2, false, projectionMatrix1.getValuesAsArray());
+        glUniformMatrix4fv(camloc2, false, projectionMatrix.getValuesAsArray());
 
         glEnable(GL_DEPTH_TEST); // z-Buffer aktivieren
+    }
+
+    @SneakyThrows
+    private float[] loadDog() {
+        try {
+            dog = ObjLoader.loadModel(new File("src/res/model/australian_dog.obj"));
+        } catch (RuntimeException e) {
+            throw new IOException(e);
+        }
+        return dog;
     }
 
     private void attachVBO(float[] values, int index, int size) {
@@ -57,28 +72,29 @@ public class Projekt extends AbstractOpenGLBase {
         glEnableVertexAttribArray(index);
     }
 
-    private void cube1Init() {
+    private void dogInit() {
         //Vertices
         vaoId1 = glGenVertexArrays();
         glBindVertexArray(vaoId1);
 
-        attachVBO(cube1, 0, 3);
+        attachVBO(dog, 0, 3);
         //Colors zum VAO hinzufügen
-        attachVBO(colors, 1, 3);
+        attachVBO(colorsCube, 1, 3);
         // attachVBO(normals, 2, 3);
     }
 
-    private void cube2Init() {
+    private void cubeInit() {
         //Vertices
         vaoId2 = glGenVertexArrays();
         glBindVertexArray(vaoId2);
 
-        attachVBO(cube2, 0, 3);
+        attachVBO(cube, 0, 3);
         //Colors zum VAO hinzufügen
-        attachVBO(colors, 1, 3);
-        attachVBO(normals, 2, 3);
+        attachVBO(colorsCube, 1, 3);
+        attachVBO(normalsCube, 2, 3);
     }
 
+    @SneakyThrows
     private void createArrays1() {
         // Koordinaten, VAO, VBO, ... hier anlegen und im Grafikspeicher ablegen
 
@@ -86,59 +102,9 @@ public class Projekt extends AbstractOpenGLBase {
 
         // cube has 6 faces, each face needs two triangles. triangle has 3 vertices. each vertex has 3 coordinates.
 
-        cube1 = new float[]
-                {
-                        // front
-                        -1.0f, 1.0f, -1.0f, //0
-                        1.0f, 1.0f, -1.0f,//1
-                        -1.0f, -1.0f, -1.0f,//2
-                        -1.0f, -1.0f, -1.0f,//2
-                        1.0f, 1.0f, -1.0f,//1
-                        1.0f, -1.0f, -1.0f,//3
+        dog = loadDog();
 
-                        // back
-                        1.0f, 1.0f, 1.0f,//5
-                        -1.0f, 1.0f, 1.0f, //4
-                        1.0f, -1.0f, 1.0f,//7
-                        1.0f, -1.0f, 1.0f,//7
-                        -1.0f, 1.0f, 1.0f, //4
-                        -1.0f, -1.0f, 1.0f,//6
-
-                        // right face
-                        1.0f, 1.0f, -1.0f,//1
-                        1.0f, 1.0f, 1.0f,//5
-                        1.0f, -1.0f, -1.0f,//3
-                        1.0f, -1.0f, -1.0f,//3
-                        1.0f, 1.0f, 1.0f,//5
-                        1.0f, -1.0f, 1.0f,//7
-
-                        //left face
-                        -1.0f, 1.0f, 1.0f, //4
-                        -1.0f, 1.0f, -1.0f, //0
-                        -1.0f, -1.0f, 1.0f,//6
-                        -1.0f, -1.0f, 1.0f,//6
-                        -1.0f, 1.0f, -1.0f, //0
-                        -1.0f, -1.0f, -1.0f,//2
-
-                        // top face
-                        -1.0f, 1.0f, 1.0f, //4
-                        1.0f, 1.0f, 1.0f,//5
-                        -1.0f, 1.0f, -1.0f, //0
-                        -1.0f, 1.0f, -1.0f, //0
-                        1.0f, 1.0f, 1.0f,//5
-                        1.0f, 1.0f, -1.0f,//1
-
-                        // bottom face
-                        -1.0f, -1.0f, -1.0f,//2
-                        1.0f, -1.0f, -1.0f,//3
-                        -1.0f, -1.0f, 1.0f,//6
-                        -1.0f, -1.0f, 1.0f,//6
-                        1.0f, -1.0f, -1.0f,//3
-                        1.0f, -1.0f, 1.0f//7
-                };
-
-
-        colors = new float[]{
+        colorsCube = new float[]{
                 // red
                 1.0f, 0.0f, 0.0f,
                 1.0f, 0.0f, 0.0f,
@@ -198,16 +164,8 @@ public class Projekt extends AbstractOpenGLBase {
                 0.0f, 1.0f, 1.0f,
                 0.0f, 1.0f, 1.0f
         };
-    }
 
-    private void createArrays2() {
-        // Koordinaten, VAO, VBO, ... hier anlegen und im Grafikspeicher ablegen
-
-        // cube and colors should be equal
-
-        // cube has 6 faces, each face needs two triangles. triangle has 3 vertices. each vertex has 3 coordinates.
-//int
-        normals = new float[]
+        normalsCube = new float[]
                 {
                         // front face
                         0.0f, 0.0f, 1.0f, //0
@@ -259,7 +217,7 @@ public class Projekt extends AbstractOpenGLBase {
 
                 };
 
-        cube2 = new float[]
+        cube = new float[]
                 {
                         // front
                         -0.5f, 0.5f, -0.5f, //0
@@ -309,86 +267,34 @@ public class Projekt extends AbstractOpenGLBase {
                         0.5f, -0.5f, -0.5f,//3
                         0.5f, -0.5f, 0.5f//7
                 };
+    }
 
+    private void createArrays2() {
+        // Koordinaten, VAO, VBO, ... hier anlegen und im Grafikspeicher ablegen
 
-        colors = new float[]{
-                // red
-                1.0f, 0.0f, 0.0f,
-                1.0f, 0.0f, 0.0f,
-                1.0f, 0.0f, 0.0f,
-                1.0f, 0.0f, 0.0f,
-                1.0f, 0.0f, 0.0f,
-                1.0f, 0.0f, 0.0f,
-                1.0f, 0.0f, 0.0f,
-                1.0f, 0.0f, 0.0f,
+        // cube and colors should be equal
 
-                //green
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
+        // cube has 6 faces, each face needs two triangles. triangle has 3 vertices. each vertex has 3 coordinates.
+//int
 
-                // blue
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-
-                // yellow
-                1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
-
-                // lila
-                1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,
-                //cyan
-                0.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f
-        };
     }
 
 
     @Override
     public void update() {
-        cubeMatrix1 = new Matrix4();
-        cubeMatrix1.rotateY(0.8f);
-        cubeMatrix1.rotateX(0.4f);
+        dogMatrix = new Matrix4();
+        dogMatrix.rotateY(0.8f);
+        dogMatrix.rotateX(0.4f);
 
         //  cubeMatrix.scale(0.1f);
-        cubeMatrix1.translate(0, 0, -7f);
+        dogMatrix.translate(0, 0, -70f);
 
-        cubeMatrix2 = new Matrix4();
+        cubeMatrix = new Matrix4();
 
-        cubeMatrix2.rotateY(angle);
-        cubeMatrix2.rotateX(angle);
+        cubeMatrix.rotateY(angle);
+        cubeMatrix.rotateX(angle);
 
-        cubeMatrix2.translate(2, 0, -10f);
+        cubeMatrix.translate(2, 0, -10f);
 
 
         angle += 0.02f;
@@ -399,20 +305,18 @@ public class Projekt extends AbstractOpenGLBase {
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f); //changes background color
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Matrix an Shader übertragen
-
-        //cube
+        // matrix an shader uebertragen
         glUseProgram(shaderProgram1.getId());
 
         int loc1 = glGetUniformLocation(shaderProgram1.getId(), "modelMatrix");
-        glUniformMatrix4fv(loc1, false, cubeMatrix1.getValuesAsArray());
+        glUniformMatrix4fv(loc1, false, dogMatrix.getValuesAsArray());
         glBindVertexArray(vaoId1);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDrawArrays(GL_TRIANGLES, 0, loadDog().length / 3);
 
         glUseProgram(shaderProgram2.getId());
 
         int loc2 = glGetUniformLocation(shaderProgram2.getId(), "modelMatrix");
-        glUniformMatrix4fv(loc2, false, cubeMatrix2.getValuesAsArray());
+        glUniformMatrix4fv(loc2, false, cubeMatrix.getValuesAsArray());
         glBindVertexArray(vaoId2);
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
