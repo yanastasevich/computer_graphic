@@ -18,7 +18,8 @@ public class Projekt extends AbstractOpenGLBase {
     private ShaderProgram shaderProgram1;
     private ShaderProgram shaderProgram2;
     private float angle;
-    private float[] dog;
+    private float[] dogVertices;
+    private float[] dogNormals;
     private float[] cube;
     private float[] normalsCube;
     private float[] colorsCube;
@@ -40,7 +41,9 @@ public class Projekt extends AbstractOpenGLBase {
 
         projectionMatrix = new Matrix4(1.0f, 100f);
         int camloc1 = glGetUniformLocation(shaderProgram1.getId(), "projectionMatrix");
+        int lightPos = glGetUniformLocation(shaderProgram1.getId(), "lightPos");
         glUniformMatrix4fv(camloc1, false, projectionMatrix.getValuesAsArray());
+        glUniform3f(lightPos, -10, 20, 10);
 
         shaderProgram2 = new ShaderProgram("second_object");
         glUseProgram(shaderProgram2.getId());
@@ -54,13 +57,14 @@ public class Projekt extends AbstractOpenGLBase {
     }
 
     @SneakyThrows
-    private float[] loadDog() {
+    private Model loadDogModel() {
+        Model model;
         try {
-            dog = ObjLoader.loadModel(new File("src/res/model/australian_dog.obj"));
+            model = ObjLoader.loadModel(getClass().getResourceAsStream("/res/model/australian_dog.obj"));
         } catch (RuntimeException e) {
             throw new IOException(e);
         }
-        return dog;
+        return model;
     }
 
     private void attachVBO(float[] values, int index, int size) {
@@ -77,9 +81,10 @@ public class Projekt extends AbstractOpenGLBase {
         vaoId1 = glGenVertexArrays();
         glBindVertexArray(vaoId1);
 
-        attachVBO(dog, 0, 3);
+        attachVBO(dogVertices, 0, 3);
+        attachVBO(dogNormals, 1, 3);
         //Colors zum VAO hinzufügen
-        attachVBO(colorsCube, 1, 3);
+      //  attachVBO(colorsCube, 1, 3);
         // attachVBO(normals, 2, 3);
     }
 
@@ -102,7 +107,8 @@ public class Projekt extends AbstractOpenGLBase {
 
         // cube has 6 faces, each face needs two triangles. triangle has 3 vertices. each vertex has 3 coordinates.
 
-        dog = loadDog();
+        dogVertices = loadDogModel().getVertices();
+        dogNormals = loadDogModel().getNormals();
 
         colorsCube = new float[]{
                 // red
@@ -311,7 +317,7 @@ public class Projekt extends AbstractOpenGLBase {
         int loc1 = glGetUniformLocation(shaderProgram1.getId(), "modelMatrix");
         glUniformMatrix4fv(loc1, false, dogMatrix.getValuesAsArray());
         glBindVertexArray(vaoId1);
-        glDrawArrays(GL_TRIANGLES, 0, loadDog().length / 3);
+        glDrawArrays(GL_TRIANGLES, 0, loadDogModel().getVertices().length / 3);
 
         glUseProgram(shaderProgram2.getId());
 

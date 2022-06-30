@@ -1,6 +1,8 @@
 package loadmodel;
 
 
+import projekt.Model;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,21 +15,19 @@ public class ObjLoader {
         return floatArray;
     }
 
-    public static float[] loadModel(File file) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+    public static Model loadModel(InputStream inputStream) throws IOException {
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
 
-        Model model = new Model();
         String line;
 
         List<Float> vertices = new ArrayList<>();
-        List<Integer> faces = new ArrayList<>();
-        List<Float> actualCoords = new ArrayList<>();
+        List<Float> normals = new ArrayList<>();
+        List<Float> verticesCoords = new ArrayList<>();
+        List<Float> normalsCoords = new ArrayList<>();
 
         while ((line = bufferedReader.readLine()) != null) {
 
             if (line.startsWith("v  ")) {
-                // System.out.println(line.split(" ")[1]);
-
                 float xValue = Float.parseFloat(line.split(" ")[2]);
                 float yValue = Float.parseFloat(line.split(" ")[3]);
                 float zValue = Float.parseFloat(line.split(" ")[4]);
@@ -36,49 +36,54 @@ public class ObjLoader {
                 vertices.add(yValue);
                 vertices.add(zValue);
 
-                // model.vertices.add(new Vector3f(xValue, yValue, zValue));
-            }
-//            else if (line.startsWith("vn ")) {
-//                float xValue = Float.parseFloat(line.split(" ")[1]);
-//                float yValue = Float.parseFloat(line.split(" ")[2]);
-//                float zValue = Float.parseFloat(line.split(" ")[3]);
-//
-//                model.normals.add(new Vector3f(xValue, yValue, zValue));
-//            }
-            else if (line.startsWith("f ")) {
-                // index nehmen, sehen welche xyz koords passen, in array list  hinzufuegen
+            } else if (line.startsWith("vn ")) {
+                float xValue = Float.parseFloat(line.split(" ")[1]);
+                float yValue = Float.parseFloat(line.split(" ")[2]);
+                float zValue = Float.parseFloat(line.split(" ")[3]);
 
-                int a = Integer.parseInt(line.split(" ")[1].split("/")[0]) - 1;
-                int b = Integer.parseInt(line.split(" ")[2].split("/")[0]) - 1;
-                int c = Integer.parseInt(line.split(" ")[3].split("/")[0]) - 1;
-                int d = Integer.parseInt(line.split(" ")[4].split("/")[0]) - 1;
+                normals.add(xValue);
+                normals.add(yValue);
+                normals.add(zValue);
 
-                actualCoords.add(vertices.get(a * 3));
-                actualCoords.add(vertices.get(a * 3 + 1));
-                actualCoords.add(vertices.get(a * 3 + 2));
-
-                actualCoords.add(vertices.get(b * 3));
-                actualCoords.add(vertices.get(b * 3 + 1));
-                actualCoords.add(vertices.get(b * 3 + 2));
-
-                actualCoords.add(vertices.get(c * 3));
-                actualCoords.add(vertices.get(c * 3 + 1));
-                actualCoords.add(vertices.get(c * 3 + 2));
-
-                actualCoords.add(vertices.get(a * 3));
-                actualCoords.add(vertices.get(a * 3 + 1));
-                actualCoords.add(vertices.get(a * 3 + 2));
-
-                actualCoords.add(vertices.get(c * 3));
-                actualCoords.add(vertices.get(c * 3 + 1));
-                actualCoords.add(vertices.get(c * 3 + 2));
-
-                actualCoords.add(vertices.get(d * 3));
-                actualCoords.add(vertices.get(d * 3 + 1));
-                actualCoords.add(vertices.get(d * 3 + 2));
+            } else if (line.startsWith("f ")) {
+                parseCoords(line, vertices, verticesCoords, 0);
+                parseCoords(line, normals, normalsCoords, 2);
             }
         }
+        float[] verticesArr = convertAsPrimitiveArray(verticesCoords);
+        float[] normalsArr = convertAsPrimitiveArray(normalsCoords);
 
-        return convertAsPrimitiveArray(actualCoords);
+        return new Model(verticesArr, normalsArr);
+    }
+
+    private static void parseCoords(String line, List<Float> actualData, List<Float> coords, int indexPos) {
+        int a = Integer.parseInt(line.split(" ")[1].split("/")[indexPos]) - 1;
+        int b = Integer.parseInt(line.split(" ")[2].split("/")[indexPos]) - 1;
+        int c = Integer.parseInt(line.split(" ")[3].split("/")[indexPos]) - 1;
+        int d = Integer.parseInt(line.split(" ")[4].split("/")[indexPos]) - 1;
+
+        coords.add(actualData.get(a * 3));
+        coords.add(actualData.get(a * 3 + 1));
+        coords.add(actualData.get(a * 3 + 2));
+
+        coords.add(actualData.get(b * 3));
+        coords.add(actualData.get(b * 3 + 1));
+        coords.add(actualData.get(b * 3 + 2));
+
+        coords.add(actualData.get(c * 3));
+        coords.add(actualData.get(c * 3 + 1));
+        coords.add(actualData.get(c * 3 + 2));
+
+        coords.add(actualData.get(a * 3));
+        coords.add(actualData.get(a * 3 + 1));
+        coords.add(actualData.get(a * 3 + 2));
+
+        coords.add(actualData.get(c * 3));
+        coords.add(actualData.get(c * 3 + 1));
+        coords.add(actualData.get(c * 3 + 2));
+
+        coords.add(actualData.get(d * 3));
+        coords.add(actualData.get(d * 3 + 1));
+        coords.add(actualData.get(d * 3 + 2));
     }
 }
