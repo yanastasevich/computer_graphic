@@ -4,21 +4,24 @@ in vec3 normal;
 out vec3 pixelColor;
 uniform vec3 lightPos;
 in vec3 fragPos;
-out vec4 fragColor;
 
 void main() {
-    pixelColor = vec3(1, 0, 0);
     vec2 mainPoint = gl_FragCoord.xy;
 
     float ambientStrength = 0.1;
     vec3 ambient = ambientStrength * color;
 
     vec3 normalizedNormal = normalize(normal);
-    vec3 lightDirection = normalize(lightPos - fragPos);
-    float difference = max(dot(normalizedNormal, lightDirection), 0.0);
-    vec3 diffuse = difference * color;
+    vec3 directionToLight = normalize(lightPos - fragPos);
+    float angle = max(dot(normalizedNormal, directionToLight), 0.0);
+    vec3 diffuse = angle * color;
 
-//    vec3 result = (ambient + diffuse) * pixelColor;
-//    fragColor = vec4(result, 1.0);
+    float specularStrength = 1.5;
+    vec3 reflectDirect = reflect(-directionToLight, normalizedNormal);
+    vec3 directionToCamera = normalize(-fragPos);
+    float spec = pow(max(dot(directionToCamera, reflectDirect), 0.0), 32);
+    vec3 specular = specularStrength * spec * vec3(1,1,1);
 
+    vec3 result = (ambient + diffuse) * pixelColor;
+    pixelColor = diffuse + ambient + specular;
 }

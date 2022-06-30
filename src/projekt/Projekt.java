@@ -22,6 +22,7 @@ public class Projekt extends AbstractOpenGLBase {
     private float[] dogNormals;
     private float[] cube;
     private float[] normalsCube;
+    private float[] uvCube;
     private float[] colorsCube;
     private int vaoId1;
     private int vaoId2;
@@ -47,7 +48,6 @@ public class Projekt extends AbstractOpenGLBase {
 
         shaderProgram2 = new ShaderProgram("second_object");
         glUseProgram(shaderProgram2.getId());
-        createArrays2();
         cubeInit();
 
         int camloc2 = glGetUniformLocation(shaderProgram2.getId(), "projectionMatrix");
@@ -84,7 +84,7 @@ public class Projekt extends AbstractOpenGLBase {
         attachVBO(dogVertices, 0, 3);
         attachVBO(dogNormals, 1, 3);
         //Colors zum VAO hinzufügen
-      //  attachVBO(colorsCube, 1, 3);
+        //  attachVBO(colorsCube, 1, 3);
         // attachVBO(normals, 2, 3);
     }
 
@@ -223,6 +223,57 @@ public class Projekt extends AbstractOpenGLBase {
 
                 };
 
+        uvCube = new float[]
+                {
+                        // front
+                        -0.5f, 0.5f, //0
+                        0.5f, 0.5f,//1
+                        -0.5f, -0.5f,//2
+                        -0.5f, -0.5f,//2
+                        0.5f, 0.5f,//1
+                        0.5f, -0.5f,//3
+
+                        // back
+                        0.5f, 0.5f,//5
+                        -0.5f, 0.5f, //4
+                        0.5f, -0.5f,//7
+                        0.5f, -0.5f,//7
+                        -0.5f, 0.5f, //4
+                        -0.5f, -0.5f,//6
+
+                        // right face
+                        0.5f, -0.5f,//1
+                        0.5f, 0.5f,//5
+                        -0.5f, -0.5f,//3
+                        -0.5f, -0.5f,//3
+                        0.5f, 0.5f,//5
+                        -0.5f, 0.5f,//7
+
+                        //left face
+                        0.5f, 0.5f, //4
+                        0.5f, -0.5f, //0
+                        -0.5f, 0.5f,//6
+                        -0.5f, 0.5f,//6
+                        0.5f, -0.5f, //0
+                        -0.5f, -0.5f,//2
+
+                        // top face
+                        -0.5f, 0.5f, //4
+                        0.5f, 0.5f,//5
+                        -0.5f, -0.5f, //0
+                        -0.5f, -0.5f, //0
+                        0.5f, 0.5f,//5
+                        0.5f, -0.5f,//1
+
+                        // bottom face
+                        -0.5f, -0.5f,//2
+                        0.5f, -0.5f,//3
+                        -0.5f, 0.5f,//6
+                        -0.5f, 0.5f,//6
+                        0.5f, -0.5f,//3
+                        0.5f, 0.5f//7
+                };
+
         cube = new float[]
                 {
                         // front
@@ -275,35 +326,20 @@ public class Projekt extends AbstractOpenGLBase {
                 };
     }
 
-    private void createArrays2() {
-        // Koordinaten, VAO, VBO, ... hier anlegen und im Grafikspeicher ablegen
-
-        // cube and colors should be equal
-
-        // cube has 6 faces, each face needs two triangles. triangle has 3 vertices. each vertex has 3 coordinates.
-//int
-
-    }
-
-
     @Override
     public void update() {
         dogMatrix = new Matrix4();
-        dogMatrix.rotateY(0.8f);
-        dogMatrix.rotateX(0.4f);
-
-        //  cubeMatrix.scale(0.1f);
+        dogMatrix.rotateY(angle);
+        dogMatrix.rotateX(angle);
         dogMatrix.translate(0, 0, -70f);
 
         cubeMatrix = new Matrix4();
-
         cubeMatrix.rotateY(angle);
         cubeMatrix.rotateX(angle);
 
         cubeMatrix.translate(2, 0, -10f);
 
-
-        angle += 0.02f;
+        angle += 0.5f;
     }
 
     @Override

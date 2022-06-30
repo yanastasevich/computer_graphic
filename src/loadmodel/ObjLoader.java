@@ -22,8 +22,10 @@ public class ObjLoader {
 
         List<Float> vertices = new ArrayList<>();
         List<Float> normals = new ArrayList<>();
+        List<Float> textures = new ArrayList<>();
         List<Float> verticesCoords = new ArrayList<>();
         List<Float> normalsCoords = new ArrayList<>();
+        List<Float> texturesCoords = new ArrayList<>();
 
         while ((line = bufferedReader.readLine()) != null) {
 
@@ -45,15 +47,26 @@ public class ObjLoader {
                 normals.add(yValue);
                 normals.add(zValue);
 
+            } else if (line.startsWith("vt ")) {
+                float xValue = Float.parseFloat(line.split(" ")[1]);
+                float yValue = Float.parseFloat(line.split(" ")[2]);
+                float zValue = Float.parseFloat(line.split(" ")[3]);
+
+                textures.add(xValue);
+                textures.add(yValue);
+                textures.add(zValue);
+
             } else if (line.startsWith("f ")) {
                 parseCoords(line, vertices, verticesCoords, 0);
                 parseCoords(line, normals, normalsCoords, 2);
+                parseCoords(line, textures, texturesCoords, 1);
             }
         }
         float[] verticesArr = convertAsPrimitiveArray(verticesCoords);
         float[] normalsArr = convertAsPrimitiveArray(normalsCoords);
+        float[] texturesArr = convertAsPrimitiveArray(texturesCoords);
 
-        return new Model(verticesArr, normalsArr);
+        return new Model(verticesArr, normalsArr, texturesArr);
     }
 
     private static void parseCoords(String line, List<Float> actualData, List<Float> coords, int indexPos) {
