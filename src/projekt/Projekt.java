@@ -21,7 +21,7 @@ public class Projekt extends AbstractOpenGLBase {
     private float[] dogVertices;
     private float[] dogNormals;
     private float[] dogTextures;
-    private float[] cube;
+    private float[] cubeVertices;
     private float[] normalsCube;
     private float[] uvCube;
     private float[] colorsCube;
@@ -51,7 +51,7 @@ public class Projekt extends AbstractOpenGLBase {
         glUniform3f(lightPos1, -10, 20, 10);
         glUniform3f(colorPoints1, 1.0f, 1.0f, 1.0f);
 
-        Texture dogTexture = new Texture("/res/model/Australian_Cattle_Dog_dif.jpg");
+        Texture dogTexture = new Texture("/res/model/Australian_Cattle_Dog_dif.jpg", 5, true);
         int textureId = dogTexture.getId();
         glBindTexture(GL_TEXTURE_2D, textureId);
 
@@ -91,25 +91,19 @@ public class Projekt extends AbstractOpenGLBase {
     }
 
     private void dogInit() {
-        //Vertices
         vaoId1 = glGenVertexArrays();
         glBindVertexArray(vaoId1);
 
         attachVBO(dogVertices, 0, 3);
         attachVBO(dogNormals, 1, 3);
         attachVBO(dogTextures, 2, 3);
-        //Colors zum VAO hinzufügen
-        //  attachVBO(colorsCube, 1, 3);
-        // attachVBO(normals, 2, 3);
     }
 
     private void cubeInit() {
-        //Vertices
         vaoId2 = glGenVertexArrays();
         glBindVertexArray(vaoId2);
 
-        attachVBO(cube, 0, 3);
-        //Colors zum VAO hinzufügen
+        attachVBO(cubeVertices, 0, 3);
         attachVBO(colorsCube, 1, 3);
         attachVBO(normalsCube, 2, 3);
     }
@@ -127,7 +121,6 @@ public class Projekt extends AbstractOpenGLBase {
         dogTextures = loadDogModel().getTextures();
 
         colorsCube = new float[]{
-                // red
                 // front
                 1.0f, 0.0f, 0.0f,
                 1.0f, 0.0f, 0.0f,
@@ -280,7 +273,7 @@ public class Projekt extends AbstractOpenGLBase {
                         0.5f, 0.5f//7
                 };
 
-        cube = new float[]
+        cubeVertices = new float[]
                 {
                         // front
                         -0.5f, 0.5f, -0.5f, //0
@@ -348,14 +341,14 @@ public class Projekt extends AbstractOpenGLBase {
         cubeMatrix.rotateY(angle);
         cubeMatrix.rotateX(angle);
 
-        cubeMatrix.translate(2, 0, -10f);
+        cubeMatrix.translate(2, 0, -7f);
 
         angle += 0.5f;
     }
 
     @Override
     protected void render() {
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f); //changes background color
+        glClearColor(1.0f, 1.0f, 1.0f, 0.5f); //changes background color
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // matrix an shader uebertragen

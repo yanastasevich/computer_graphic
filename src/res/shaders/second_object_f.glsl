@@ -8,8 +8,6 @@ uniform vec3 lightPos2;
 out vec3 FragColor;
 
 void main() {
-    vec2 mainPoint = gl_FragCoord.xy;
-
     float ambientStrength = 0.1;
     vec3 ambient = ambientStrength * color;
 

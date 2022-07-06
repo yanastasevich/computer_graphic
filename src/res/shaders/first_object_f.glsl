@@ -7,7 +7,6 @@ uniform vec3 lightPos1;
 uniform vec3 colorPoints1;
 uniform sampler2D sampler;
 
-out vec3 pixelColor;
 out vec4 FragColor;
 
 void main() {
