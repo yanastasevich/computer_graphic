@@ -5,6 +5,7 @@ import static org.lwjgl.opengl.GL30.*;
 
 import lenz.opengl.AbstractOpenGLBase;
 import lenz.opengl.ShaderProgram;
+import lenz.opengl.Texture;
 import loadmodel.ObjLoader;
 import lombok.SneakyThrows;
 
@@ -20,6 +21,7 @@ public class Projekt extends AbstractOpenGLBase {
     private float angle;
     private float[] dogVertices;
     private float[] dogNormals;
+    private float[] dogTextures;
     private float[] cube;
     private float[] normalsCube;
     private float[] uvCube;
@@ -42,13 +44,21 @@ public class Projekt extends AbstractOpenGLBase {
 
         projectionMatrix = new Matrix4(1.0f, 100f);
         int camloc1 = glGetUniformLocation(shaderProgram1.getId(), "projectionMatrix");
-        int lightPos = glGetUniformLocation(shaderProgram1.getId(), "lightPos");
+        int lightPos1 = glGetUniformLocation(shaderProgram1.getId(), "lightPos1");
         glUniformMatrix4fv(camloc1, false, projectionMatrix.getValuesAsArray());
-        glUniform3f(lightPos, -10, 20, 10);
+        glUniform3f(lightPos1, -10, 20, 10);
+
+        Texture dogTexture = new Texture("/res/model/Australian_Cattle_Dog_dif.jpg");
+        int textureId = dogTexture.getId();
+        glBindTexture(GL_TEXTURE_2D, textureId);
+
 
         shaderProgram2 = new ShaderProgram("second_object");
         glUseProgram(shaderProgram2.getId());
         cubeInit();
+
+        int lightPos2 = glGetUniformLocation(shaderProgram1.getId(), "lightPos2");
+        glUniform3f(lightPos2, -10, 20, 10);
 
         int camloc2 = glGetUniformLocation(shaderProgram2.getId(), "projectionMatrix");
         glUniformMatrix4fv(camloc2, false, projectionMatrix.getValuesAsArray());
@@ -83,6 +93,7 @@ public class Projekt extends AbstractOpenGLBase {
 
         attachVBO(dogVertices, 0, 3);
         attachVBO(dogNormals, 1, 3);
+        attachVBO(dogTextures, 2, 3);
         //Colors zum VAO hinzufügen
         //  attachVBO(colorsCube, 1, 3);
         // attachVBO(normals, 2, 3);
@@ -109,6 +120,7 @@ public class Projekt extends AbstractOpenGLBase {
 
         dogVertices = loadDogModel().getVertices();
         dogNormals = loadDogModel().getNormals();
+        dogTextures = loadDogModel().getTextures();
 
         colorsCube = new float[]{
                 // red
@@ -329,9 +341,14 @@ public class Projekt extends AbstractOpenGLBase {
     @Override
     public void update() {
         dogMatrix = new Matrix4();
-        dogMatrix.rotateY(angle);
+        float pivotX = 0;
+        float pivotY = 0;
+        dogMatrix.translate(pivotX, pivotY, -40);
         dogMatrix.rotateX(angle);
-        dogMatrix.translate(0, 0, -70f);
+        dogMatrix.translate(-pivotX, -pivotY, -40f);
+        dogMatrix.rotateZ(angle);
+
+        // dogMatrix.rotateZ(angle);
 
         cubeMatrix = new Matrix4();
         cubeMatrix.rotateY(angle);

@@ -1,6 +1,7 @@
 #version 330
 layout(location=0) in vec3 eckenAusJava;//gibt coord weiter
 layout(location=1) in vec3 normalsFromJava;
+layout(location=2) in vec2 texturesFromJava;
 
 uniform mat4 modelMatrix;
 uniform mat4 projectionMatrix;
@@ -8,6 +9,8 @@ out vec3 fragPos;
 
 out vec3 color;
 out vec3 normal;
+out vec2 texCoord;
+
 
 void main() {
     color = vec3(1, 0, 0);
@@ -15,4 +18,5 @@ void main() {
     fragPos = vec3(modelMatrix * vec4(eckenAusJava, 1.0));
 
     normal = inverse(transpose(mat3(modelMatrix))) * normalsFromJava;
+    texCoord = texturesFromJava;
 }
