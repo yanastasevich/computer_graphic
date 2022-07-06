@@ -19,5 +19,4 @@ void main() {
     color = farbenAusJava;
     normal = inverse(transpose(mat3(modelMatrix))) * normalsAusJava;
     gl_Position = projectionMatrix *modelMatrix * vec4(eckenAusJava, 1.0f);
-
 }

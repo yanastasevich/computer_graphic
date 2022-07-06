@@ -9,7 +9,6 @@ import lenz.opengl.Texture;
 import loadmodel.ObjLoader;
 import lombok.SneakyThrows;
 
-import java.io.File;
 import java.io.IOException;
 
 public class Projekt extends AbstractOpenGLBase {
@@ -37,16 +36,20 @@ public class Projekt extends AbstractOpenGLBase {
     @SneakyThrows
     @Override
     protected void init() {
+        createArrays();
+
         shaderProgram1 = new ShaderProgram("first_object");
         glUseProgram(shaderProgram1.getId());
-        createArrays1();
         dogInit();
 
         projectionMatrix = new Matrix4(1.0f, 100f);
         int camloc1 = glGetUniformLocation(shaderProgram1.getId(), "projectionMatrix");
         int lightPos1 = glGetUniformLocation(shaderProgram1.getId(), "lightPos1");
+        int colorPoints1 = glGetUniformLocation(shaderProgram1.getId(), "colorPoints1");
+
         glUniformMatrix4fv(camloc1, false, projectionMatrix.getValuesAsArray());
         glUniform3f(lightPos1, -10, 20, 10);
+        glUniform3f(colorPoints1, 1.0f, 1.0f, 1.0f);
 
         Texture dogTexture = new Texture("/res/model/Australian_Cattle_Dog_dif.jpg");
         int textureId = dogTexture.getId();
@@ -57,11 +60,12 @@ public class Projekt extends AbstractOpenGLBase {
         glUseProgram(shaderProgram2.getId());
         cubeInit();
 
+        int camloc2 = glGetUniformLocation(shaderProgram2.getId(), "projectionMatrix");
         int lightPos2 = glGetUniformLocation(shaderProgram1.getId(), "lightPos2");
+
+        glUniformMatrix4fv(camloc2, false, projectionMatrix.getValuesAsArray());
         glUniform3f(lightPos2, -10, 20, 10);
 
-        int camloc2 = glGetUniformLocation(shaderProgram2.getId(), "projectionMatrix");
-        glUniformMatrix4fv(camloc2, false, projectionMatrix.getValuesAsArray());
 
         glEnable(GL_DEPTH_TEST); // z-Buffer aktivieren
     }
@@ -111,7 +115,7 @@ public class Projekt extends AbstractOpenGLBase {
     }
 
     @SneakyThrows
-    private void createArrays1() {
+    private void createArrays() {
         // Koordinaten, VAO, VBO, ... hier anlegen und im Grafikspeicher ablegen
 
         // cube and colors should be equal
@@ -124,8 +128,7 @@ public class Projekt extends AbstractOpenGLBase {
 
         colorsCube = new float[]{
                 // red
-                1.0f, 0.0f, 0.0f,
-                1.0f, 0.0f, 0.0f,
+                // front
                 1.0f, 0.0f, 0.0f,
                 1.0f, 0.0f, 0.0f,
                 1.0f, 0.0f, 0.0f,
@@ -133,9 +136,7 @@ public class Projekt extends AbstractOpenGLBase {
                 1.0f, 0.0f, 0.0f,
                 1.0f, 0.0f, 0.0f,
 
-                //green
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
+                // back
                 0.0f, 1.0f, 0.0f,
                 0.0f, 1.0f, 0.0f,
                 0.0f, 1.0f, 0.0f,
@@ -143,44 +144,37 @@ public class Projekt extends AbstractOpenGLBase {
                 0.0f, 1.0f, 0.0f,
                 0.0f, 1.0f, 0.0f,
 
-                // blue
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
+                // right face
+                0.5f, 0.5f, 1.0f,
+                0.5f, 0.5f, 1.0f,
+                0.5f, 0.5f, 1.0f,
+                0.5f, 0.5f, 1.0f,
+                0.5f, 0.5f, 1.0f,
+                0.5f, 0.5f, 1.0f,
 
-                // yellow
-                1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
-                1.0f, 1.0f, 0.0f,
+                //left face
+                1.0f, 0.5f, 0.5f,
+                1.0f, 0.5f, 0.5f,
+                1.0f, 0.5f, 0.5f,
+                1.0f, 0.5f, 0.5f,
+                1.0f, 0.5f, 0.5f,
+                1.0f, 0.5f, 0.5f,
 
-                // lila
-                1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f,
-                //cyan
-                0.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f,
-                0.0f, 1.0f, 1.0f
+                // top face
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+
+                // bottom face
+                0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 1.0f,
+                0.0f, 0.0f, 1.0f,
         };
 
         normalsCube = new float[]

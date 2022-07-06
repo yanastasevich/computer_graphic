@@ -5,10 +5,9 @@ in vec3 fragPos;
 
 uniform vec3 lightPos2;
 
-out vec3 pixelColor;
+out vec3 FragColor;
 
 void main() {
-    pixelColor = color;
     vec2 mainPoint = gl_FragCoord.xy;
 
     float ambientStrength = 0.1;
@@ -23,8 +22,7 @@ void main() {
     vec3 reflectDirect = reflect(-directionToLight, normalizedNormal);
     vec3 directionToCamera = normalize(-fragPos);
     float spec = pow(max(dot(directionToCamera, reflectDirect), 0.0), 32);
-    vec3 specular = specularStrength * spec * vec3(1,1,1);
+    vec3 specular = specularStrength * spec * vec3(1, 1, 1);
 
-    vec3 result = (ambient + diffuse) * pixelColor;
-    pixelColor = diffuse + ambient + specular;
+    FragColor = (diffuse + ambient + specular) * color;
 }
