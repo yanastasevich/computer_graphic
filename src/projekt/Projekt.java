@@ -27,6 +27,8 @@ public class Projekt extends AbstractOpenGLBase {
     private float[] colorsCube;
     private int vaoId1;
     private int vaoId2;
+    Texture dogTexture;
+    Texture cubeTexture;
 
 
     public static void main(String[] args) {
@@ -51,9 +53,8 @@ public class Projekt extends AbstractOpenGLBase {
         glUniform3f(lightPos1, -10, 20, 10);
         glUniform3f(colorPoints1, 1.0f, 1.0f, 1.0f);
 
-        Texture dogTexture = new Texture("/res/model/Australian_Cattle_Dog_dif.jpg", 5, true);
-        int textureId = dogTexture.getId();
-        glBindTexture(GL_TEXTURE_2D, textureId);
+        dogTexture = new Texture("/res/model/Australian_Cattle_Dog_dif.jpg", 5, true);
+
 
 
         shaderProgram2 = new ShaderProgram("second_object");
@@ -62,9 +63,16 @@ public class Projekt extends AbstractOpenGLBase {
 
         int camloc2 = glGetUniformLocation(shaderProgram2.getId(), "projectionMatrix");
         int lightPos2 = glGetUniformLocation(shaderProgram1.getId(), "lightPos2");
+      //  int colorPoints2 = glGetUniformLocation(shaderProgram1.getId(), "colorPoints2");
+
 
         glUniformMatrix4fv(camloc2, false, projectionMatrix.getValuesAsArray());
         glUniform3f(lightPos2, -10, 20, 10);
+       // glUniform3f(colorPoints2, 0.25f, 0.25f, 0.25f);
+
+
+        cubeTexture = new Texture("/res/model/wooden_texture.jpeg", 5, true);
+
 
 
         glEnable(GL_DEPTH_TEST); // z-Buffer aktivieren
@@ -104,8 +112,9 @@ public class Projekt extends AbstractOpenGLBase {
         glBindVertexArray(vaoId2);
 
         attachVBO(cubeVertices, 0, 3);
-        attachVBO(colorsCube, 1, 3);
-        attachVBO(normalsCube, 2, 3);
+      //  attachVBO(colorsCube, 1, 3);
+        attachVBO(normalsCube, 1, 3);
+        attachVBO(uvCube, 2, 2);
     }
 
     @SneakyThrows
@@ -225,57 +234,99 @@ public class Projekt extends AbstractOpenGLBase {
         uvCube = new float[]
                 {
                         // front
-                        -0.5f, 0.5f, //0
-                        0.5f, 0.5f,//1
-                        -0.5f, -0.5f,//2
-                        -0.5f, -0.5f,//2
-                        0.5f, 0.5f,//1
-                        0.5f, -0.5f,//3
+//                        -0.5f, 0.5f, //0
+//                        0.5f, 0.5f,//1
+//                        -0.5f, -0.5f,//2
+//                        -0.5f, -0.5f,//2
+//                        0.5f, 0.5f,//1
+//                        0.5f, -0.5f,//3
+
+                        0f, 0f,
+                        1f, 0f,
+                        0f, 1f,
+                        0f, 1f,
+                        1f, 0f,
+                        1f, 1f,
 
                         // back
-                        0.5f, 0.5f,//5
-                        -0.5f, 0.5f, //4
-                        0.5f, -0.5f,//7
-                        0.5f, -0.5f,//7
-                        -0.5f, 0.5f, //4
-                        -0.5f, -0.5f,//6
+//                        0.5f, 0.5f,//5
+//                        -0.5f, 0.5f, //4
+//                        0.5f, -0.5f,//7
+//                        0.5f, -0.5f,//7
+//                        -0.5f, 0.5f, //4
+//                        -0.5f, -0.5f,//6
+
+                        1f, 0f,
+                        0f, 0f,
+                        1f, 1f,
+                        1f, 1f,
+                        0f, 0f,
+                        0f, 1f,
 
                         // right face
-                        0.5f, -0.5f,//1
-                        0.5f, 0.5f,//5
-                        -0.5f, -0.5f,//3
-                        -0.5f, -0.5f,//3
-                        0.5f, 0.5f,//5
-                        -0.5f, 0.5f,//7
+//                        0.5f, -0.5f,//1
+//                        0.5f, 0.5f,//5
+//                        -0.5f, -0.5f,//3
+//                        -0.5f, -0.5f,//3
+//                        0.5f, 0.5f,//5
+//                        -0.5f, 0.5f,//7
+
+                        1f, 0f,
+                        1f, 1f,
+                        0f, 0f,
+                        0f, 0f,
+                        1f, 1f,
+                        0f, 1f,
 
                         //left face
-                        0.5f, 0.5f, //4
-                        0.5f, -0.5f, //0
-                        -0.5f, 0.5f,//6
-                        -0.5f, 0.5f,//6
-                        0.5f, -0.5f, //0
-                        -0.5f, -0.5f,//2
+//                        0.5f, 0.5f, //4
+//                        0.5f, -0.5f, //0
+//                        -0.5f, 0.5f,//6
+//                        -0.5f, 0.5f,//6
+//                        0.5f, -0.5f, //0
+//                        -0.5f, -0.5f,//2
+
+                        1f, 1f,
+                        1f, 0f,
+                        0f, 1f,
+                        0f, 1f,
+                        1f, 0f,
+                        0f, 0f,
 
                         // top face
-                        -0.5f, 0.5f, //4
-                        0.5f, 0.5f,//5
-                        -0.5f, -0.5f, //0
-                        -0.5f, -0.5f, //0
-                        0.5f, 0.5f,//5
-                        0.5f, -0.5f,//1
+//                        -0.5f, 0.5f, //4
+//                        0.5f, 0.5f,//5
+//                        -0.5f, -0.5f, //0
+//                        -0.5f, -0.5f, //0
+//                        0.5f, 0.5f,//5
+//                        0.5f, -0.5f,//1
+
+                        0f, 1f,
+                        1f, 1f,
+                        0f, 0f,
+                        0f, 0f,
+                        1f, 1f,
+                        1f, 0f,
 
                         // bottom face
-                        -0.5f, -0.5f,//2
-                        0.5f, -0.5f,//3
-                        -0.5f, 0.5f,//6
-                        -0.5f, 0.5f,//6
-                        0.5f, -0.5f,//3
-                        0.5f, 0.5f//7
+//                        -0.5f, -0.5f,//2
+//                        0.5f, -0.5f,//3
+//                        -0.5f, 0.5f,//6
+//                        -0.5f, 0.5f,//6
+//                        0.5f, -0.5f,//3
+//                        0.5f, 0.5f//7
+
+                        0f, 0f,
+                        1f, 0f,
+                        0f, 1f,
+                        0f, 1f,
+                        1f, 0f,
+                        1f, 1f
                 };
 
         cubeVertices = new float[]
                 {
-                        // front
+                        // back
                         -0.5f, 0.5f, -0.5f, //0
                         0.5f, 0.5f, -0.5f,//1
                         -0.5f, -0.5f, -0.5f,//2
@@ -283,7 +334,7 @@ public class Projekt extends AbstractOpenGLBase {
                         0.5f, 0.5f, -0.5f,//1
                         0.5f, -0.5f, -0.5f,//3
 
-                        // back
+                        // front
                         0.5f, 0.5f, 0.5f,//5
                         -0.5f, 0.5f, 0.5f, //4
                         0.5f, -0.5f, 0.5f,//7
@@ -338,10 +389,13 @@ public class Projekt extends AbstractOpenGLBase {
         // dogMatrix.rotateZ(angle);
 
         cubeMatrix = new Matrix4();
-        cubeMatrix.rotateY(angle);
-        cubeMatrix.rotateX(angle);
+      //  cubeMatrix.multiply(dogMatrix);
 
+       // cubeMatrix.rotateX(angle);
+       // cubeMatrix.rotateY(angle);
         cubeMatrix.translate(2, 0, -7f);
+
+
 
         angle += 0.5f;
     }
@@ -357,6 +411,8 @@ public class Projekt extends AbstractOpenGLBase {
         int loc1 = glGetUniformLocation(shaderProgram1.getId(), "modelMatrix");
         glUniformMatrix4fv(loc1, false, dogMatrix.getValuesAsArray());
         glBindVertexArray(vaoId1);
+        glBindTexture(GL_TEXTURE_2D, dogTexture.getId());
+
         glDrawArrays(GL_TRIANGLES, 0, loadDogModel().getVertices().length / 3);
 
         glUseProgram(shaderProgram2.getId());
@@ -364,6 +420,8 @@ public class Projekt extends AbstractOpenGLBase {
         int loc2 = glGetUniformLocation(shaderProgram2.getId(), "modelMatrix");
         glUniformMatrix4fv(loc2, false, cubeMatrix.getValuesAsArray());
         glBindVertexArray(vaoId2);
+        glBindTexture(GL_TEXTURE_2D, cubeTexture.getId());
+
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 

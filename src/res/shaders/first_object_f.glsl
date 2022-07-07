@@ -5,7 +5,7 @@ in vec3 fragPos;
 
 uniform vec3 lightPos1;
 uniform vec3 colorPoints1;
-uniform sampler2D sampler;
+uniform sampler2D sampler1;
 
 out vec4 FragColor;
 
@@ -25,7 +25,7 @@ void main() {
     vec3 specular = specularStrength * spec * vec3(1,1,1);
 
     vec4 phong = vec4((ambient + diffuse + specular) * colorPoints1, 1.0f);
-    vec4 texel = texture(sampler, uvCoord);
+    vec4 texel = texture(sampler1, uvCoord);
 
     FragColor = texel * phong;
 }
