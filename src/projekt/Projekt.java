@@ -24,7 +24,6 @@ public class Projekt extends AbstractOpenGLBase {
     private float[] cubeVertices;
     private float[] normalsCube;
     private float[] uvCube;
-    private float[] colorsCube;
     private int vaoId1;
     private int vaoId2;
     Texture dogTexture;
@@ -56,23 +55,17 @@ public class Projekt extends AbstractOpenGLBase {
         dogTexture = new Texture("/res/model/Australian_Cattle_Dog_dif.jpg", 5, true);
 
 
-
         shaderProgram2 = new ShaderProgram("second_object");
         glUseProgram(shaderProgram2.getId());
         cubeInit();
 
         int camloc2 = glGetUniformLocation(shaderProgram2.getId(), "projectionMatrix");
         int lightPos2 = glGetUniformLocation(shaderProgram1.getId(), "lightPos2");
-      //  int colorPoints2 = glGetUniformLocation(shaderProgram1.getId(), "colorPoints2");
-
 
         glUniformMatrix4fv(camloc2, false, projectionMatrix.getValuesAsArray());
         glUniform3f(lightPos2, -10, 20, 10);
-       // glUniform3f(colorPoints2, 0.25f, 0.25f, 0.25f);
-
 
         cubeTexture = new Texture("/res/model/wooden_texture.jpeg", 5, true);
-
 
 
         glEnable(GL_DEPTH_TEST); // z-Buffer aktivieren
@@ -112,7 +105,6 @@ public class Projekt extends AbstractOpenGLBase {
         glBindVertexArray(vaoId2);
 
         attachVBO(cubeVertices, 0, 3);
-      //  attachVBO(colorsCube, 1, 3);
         attachVBO(normalsCube, 1, 3);
         attachVBO(uvCube, 2, 2);
     }
@@ -128,56 +120,6 @@ public class Projekt extends AbstractOpenGLBase {
         dogVertices = loadDogModel().getVertices();
         dogNormals = loadDogModel().getNormals();
         dogTextures = loadDogModel().getTextures();
-
-        colorsCube = new float[]{
-                // front
-                1.0f, 0.0f, 0.0f,
-                1.0f, 0.0f, 0.0f,
-                1.0f, 0.0f, 0.0f,
-                1.0f, 0.0f, 0.0f,
-                1.0f, 0.0f, 0.0f,
-                1.0f, 0.0f, 0.0f,
-
-                // back
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
-                0.0f, 1.0f, 0.0f,
-
-                // right face
-                0.5f, 0.5f, 1.0f,
-                0.5f, 0.5f, 1.0f,
-                0.5f, 0.5f, 1.0f,
-                0.5f, 0.5f, 1.0f,
-                0.5f, 0.5f, 1.0f,
-                0.5f, 0.5f, 1.0f,
-
-                //left face
-                1.0f, 0.5f, 0.5f,
-                1.0f, 0.5f, 0.5f,
-                1.0f, 0.5f, 0.5f,
-                1.0f, 0.5f, 0.5f,
-                1.0f, 0.5f, 0.5f,
-                1.0f, 0.5f, 0.5f,
-
-                // top face
-                0.5f, 0.5f, 0.5f,
-                0.5f, 0.5f, 0.5f,
-                0.5f, 0.5f, 0.5f,
-                0.5f, 0.5f, 0.5f,
-                0.5f, 0.5f, 0.5f,
-                0.5f, 0.5f, 0.5f,
-
-                // bottom face
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-                0.0f, 0.0f, 1.0f,
-        };
 
         normalsCube = new float[]
                 {
@@ -233,28 +175,12 @@ public class Projekt extends AbstractOpenGLBase {
 
         uvCube = new float[]
                 {
-                        // front
-//                        -0.5f, 0.5f, //0
-//                        0.5f, 0.5f,//1
-//                        -0.5f, -0.5f,//2
-//                        -0.5f, -0.5f,//2
-//                        0.5f, 0.5f,//1
-//                        0.5f, -0.5f,//3
-
                         0f, 0f,
                         1f, 0f,
                         0f, 1f,
                         0f, 1f,
                         1f, 0f,
                         1f, 1f,
-
-                        // back
-//                        0.5f, 0.5f,//5
-//                        -0.5f, 0.5f, //4
-//                        0.5f, -0.5f,//7
-//                        0.5f, -0.5f,//7
-//                        -0.5f, 0.5f, //4
-//                        -0.5f, -0.5f,//6
 
                         1f, 0f,
                         0f, 0f,
@@ -263,28 +189,12 @@ public class Projekt extends AbstractOpenGLBase {
                         0f, 0f,
                         0f, 1f,
 
-                        // right face
-//                        0.5f, -0.5f,//1
-//                        0.5f, 0.5f,//5
-//                        -0.5f, -0.5f,//3
-//                        -0.5f, -0.5f,//3
-//                        0.5f, 0.5f,//5
-//                        -0.5f, 0.5f,//7
-
                         1f, 0f,
                         1f, 1f,
                         0f, 0f,
                         0f, 0f,
                         1f, 1f,
                         0f, 1f,
-
-                        //left face
-//                        0.5f, 0.5f, //4
-//                        0.5f, -0.5f, //0
-//                        -0.5f, 0.5f,//6
-//                        -0.5f, 0.5f,//6
-//                        0.5f, -0.5f, //0
-//                        -0.5f, -0.5f,//2
 
                         1f, 1f,
                         1f, 0f,
@@ -293,28 +203,12 @@ public class Projekt extends AbstractOpenGLBase {
                         1f, 0f,
                         0f, 0f,
 
-                        // top face
-//                        -0.5f, 0.5f, //4
-//                        0.5f, 0.5f,//5
-//                        -0.5f, -0.5f, //0
-//                        -0.5f, -0.5f, //0
-//                        0.5f, 0.5f,//5
-//                        0.5f, -0.5f,//1
-
                         0f, 1f,
                         1f, 1f,
                         0f, 0f,
                         0f, 0f,
                         1f, 1f,
                         1f, 0f,
-
-                        // bottom face
-//                        -0.5f, -0.5f,//2
-//                        0.5f, -0.5f,//3
-//                        -0.5f, 0.5f,//6
-//                        -0.5f, 0.5f,//6
-//                        0.5f, -0.5f,//3
-//                        0.5f, 0.5f//7
 
                         0f, 0f,
                         1f, 0f,
@@ -379,23 +273,14 @@ public class Projekt extends AbstractOpenGLBase {
     @Override
     public void update() {
         dogMatrix = new Matrix4();
-        float pivotX = 0;
-        float pivotY = 0;
-        dogMatrix.translate(pivotX, pivotY, -40);
-        dogMatrix.rotateX(angle);
-        dogMatrix.translate(-pivotX, -pivotY, -40f);
-        dogMatrix.rotateZ(angle);
-
-        // dogMatrix.rotateZ(angle);
+        dogMatrix.rotateY(angle);
+        dogMatrix.translate(0, 0, 2f);
+        dogMatrix.scale(0.5f);
 
         cubeMatrix = new Matrix4();
-      //  cubeMatrix.multiply(dogMatrix);
-
-       // cubeMatrix.rotateX(angle);
-       // cubeMatrix.rotateY(angle);
-        cubeMatrix.translate(2, 0, -7f);
-
-
+        cubeMatrix.rotateX(angle);
+        cubeMatrix.translate(0, 0, -10f);
+        dogMatrix.multiply(cubeMatrix);
 
         angle += 0.5f;
     }

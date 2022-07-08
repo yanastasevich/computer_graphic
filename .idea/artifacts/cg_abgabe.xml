@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="cg_abgabe">
+    <output-path>$PROJECT_DIR$/classes/artifacts/cg_abgabe</output-path>
+    <root id="archive" name="cg_abgabe.jar">
+      <element id="module-output" name="CG" />
+      <element id="module-source" name="CG" />
+    </root>
+  </artifact>
+</component>
